@@ -39,3 +39,7 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+/.vs
+/backend/bin/Debug/net8.0
+/backend/obj
+/backend/marketing.db
