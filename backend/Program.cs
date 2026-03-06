@@ -39,7 +39,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseCors("AllowFrontend");
-app.UseHttpsRedirection();
+// app.UseHttpsRedirection(); // Disabled for development
 app.UseAuthorization();
 app.MapControllers();
 
