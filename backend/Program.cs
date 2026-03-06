@@ -32,11 +32,9 @@ builder.Services.AddScoped<ILeadService, LeadService>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+// Enable Swagger in both Development and Production for testing
+app.UseSwagger();
+app.UseSwaggerUI();
 
 app.UseCors("AllowFrontend");
 // app.UseHttpsRedirection(); // Disabled for development
