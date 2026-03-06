@@ -3,12 +3,12 @@
 import { useEffect, useState } from 'react';
 import { campaignsApi, Campaign, CampaignStatus, clientsApi, Client } from '@/lib/api';
 
-const statusColors: Record<CampaignStatus, string> = {
-  Draft: 'bg-gray-600',
-  Active: 'bg-green-600',
-  Paused: 'bg-yellow-600',
-  Completed: 'bg-blue-600',
-  Cancelled: 'bg-red-600',
+const statusColors: Record<CampaignStatus, { bg: string; text: string; border: string }> = {
+  Draft: { bg: 'bg-zinc-500/20', text: 'text-zinc-400', border: 'border-zinc-500/30' },
+  Active: { bg: 'bg-green-500/20', text: 'text-green-400', border: 'border-green-500/30' },
+  Paused: { bg: 'bg-yellow-500/20', text: 'text-yellow-400', border: 'border-yellow-500/30' },
+  Completed: { bg: 'bg-blue-500/20', text: 'text-blue-400', border: 'border-blue-500/30' },
+  Cancelled: { bg: 'bg-red-500/20', text: 'text-red-400', border: 'border-red-500/30' },
 };
 
 export default function Campaigns() {
@@ -150,71 +150,85 @@ export default function Campaigns() {
   }
 
   if (loading) {
-    return <div className="text-white">Loading campaigns...</div>;
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="flex flex-col items-center gap-3">
+          <div className="w-8 h-8 border-2 border-purple-500 border-t-transparent rounded-full animate-spin" />
+          <p className="text-zinc-400">Loading campaigns...</p>
+        </div>
+      </div>
+    );
   }
 
   return (
-    <div>
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-bold text-white">Campaigns</h2>
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="flex justify-between items-center animate-slide-in">
+        <div>
+          <h2 className="text-3xl font-bold text-white">Campaigns</h2>
+          <p className="text-zinc-400 mt-1">Create and manage your marketing campaigns</p>
+        </div>
         <button
           onClick={startCreate}
           disabled={clients.length === 0}
-          className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          className="px-5 py-2.5 bg-gradient-to-r from-purple-600 to-purple-700 text-white rounded-xl hover:from-purple-700 hover:to-purple-800 transition-all duration-200 font-medium shadow-lg shadow-purple-600/20 btn-press disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none"
         >
           + Add Campaign
         </button>
       </div>
 
       {clients.length === 0 && (
-        <div className="mb-4 p-4 bg-yellow-600/20 border border-yellow-600 rounded-lg text-yellow-400">
+        <div className="p-4 bg-yellow-500/10 border border-yellow-500/30 rounded-xl text-yellow-400 flex items-center gap-3 animate-fade-in">
+          <span className="text-xl">⚠️</span>
           Please add a client first before creating campaigns.
         </div>
       )}
 
       {/* Form Modal */}
       {showForm && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-neutral-800 p-6 rounded-xl w-full max-w-md border border-neutral-700 max-h-[90vh] overflow-y-auto">
-            <h3 className="text-xl font-bold text-white mb-4">
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 animate-fade-in">
+          <div className="bg-[#1a1a1a] p-8 rounded-2xl w-full max-w-md border border-[#2a2a2a] shadow-2xl max-h-[90vh] overflow-y-auto animate-scale-in">
+            <h3 className="text-xl font-bold text-white mb-6">
               {editingCampaign ? 'Edit Campaign' : 'Add New Campaign'}
             </h3>
-            <form onSubmit={handleSubmit} className="space-y-4">
+            <form onSubmit={handleSubmit} className="space-y-5">
               <div>
-                <label className="block text-neutral-400 text-sm mb-1">Campaign Name</label>
+                <label className="block text-zinc-400 text-sm mb-2">Campaign Name</label>
                 <input
                   type="text"
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  className="w-full px-4 py-2 bg-neutral-700 text-white rounded-lg border border-neutral-600 focus:border-blue-500 focus:outline-none"
+                  className="w-full px-4 py-3 bg-[#252525] text-white rounded-xl border border-[#3a3a3a] focus:border-purple-500 focus:outline-none input-focus"
                   required
+                  placeholder="Summer Sale 2024"
                 />
               </div>
               <div>
-                <label className="block text-neutral-400 text-sm mb-1">Description</label>
+                <label className="block text-zinc-400 text-sm mb-2">Description</label>
                 <textarea
                   value={formData.description}
                   onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                   rows={2}
-                  className="w-full px-4 py-2 bg-neutral-700 text-white rounded-lg border border-neutral-600 focus:border-blue-500 focus:outline-none"
+                  className="w-full px-4 py-3 bg-[#252525] text-white rounded-xl border border-[#3a3a3a] focus:border-purple-500 focus:outline-none input-focus resize-none"
+                  placeholder="Campaign description..."
                 />
               </div>
               <div>
-                <label className="block text-neutral-400 text-sm mb-1">Type</label>
+                <label className="block text-zinc-400 text-sm mb-2">Type</label>
                 <input
                   type="text"
                   value={formData.type}
                   onChange={(e) => setFormData({ ...formData, type: e.target.value })}
                   placeholder="Email, Social, PPC, Content"
-                  className="w-full px-4 py-2 bg-neutral-700 text-white rounded-lg border border-neutral-600 focus:border-blue-500 focus:outline-none"
+                  className="w-full px-4 py-3 bg-[#252525] text-white rounded-xl border border-[#3a3a3a] focus:border-purple-500 focus:outline-none input-focus"
                 />
               </div>
               <div>
-                <label className="block text-neutral-400 text-sm mb-1">Client</label>
+                <label className="block text-zinc-400 text-sm mb-2">Client</label>
                 <select
                   value={formData.clientId}
                   onChange={(e) => setFormData({ ...formData, clientId: Number(e.target.value) })}
-                  className="w-full px-4 py-2 bg-neutral-700 text-white rounded-lg border border-neutral-600 focus:border-blue-500 focus:outline-none"
+                  className="w-full px-4 py-3 bg-[#252525] text-white rounded-xl border border-[#3a3a3a] focus:border-purple-500 focus:outline-none input-focus"
                   required
                 >
                   {clients.map((client) => (
@@ -223,11 +237,11 @@ export default function Campaigns() {
                 </select>
               </div>
               <div>
-                <label className="block text-neutral-400 text-sm mb-1">Status</label>
+                <label className="block text-zinc-400 text-sm mb-2">Status</label>
                 <select
                   value={formData.status}
                   onChange={(e) => setFormData({ ...formData, status: e.target.value as CampaignStatus })}
-                  className="w-full px-4 py-2 bg-neutral-700 text-white rounded-lg border border-neutral-600 focus:border-blue-500 focus:outline-none"
+                  className="w-full px-4 py-3 bg-[#252525] text-white rounded-xl border border-[#3a3a3a] focus:border-purple-500 focus:outline-none input-focus"
                 >
                   {Object.values(CampaignStatus).map((status) => (
                     <option key={status} value={status}>{status}</option>
@@ -235,47 +249,48 @@ export default function Campaigns() {
                 </select>
               </div>
               <div>
-                <label className="block text-neutral-400 text-sm mb-1">Budget ($)</label>
+                <label className="block text-zinc-400 text-sm mb-2">Budget ($)</label>
                 <input
                   type="number"
                   value={formData.budget}
                   onChange={(e) => setFormData({ ...formData, budget: Number(e.target.value) })}
                   min="0"
                   step="0.01"
-                  className="w-full px-4 py-2 bg-neutral-700 text-white rounded-lg border border-neutral-600 focus:border-blue-500 focus:outline-none"
+                  className="w-full px-4 py-3 bg-[#252525] text-white rounded-xl border border-[#3a3a3a] focus:border-purple-500 focus:outline-none input-focus"
+                  placeholder="5000"
                 />
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-neutral-400 text-sm mb-1">Start Date</label>
+                  <label className="block text-zinc-400 text-sm mb-2">Start Date</label>
                   <input
                     type="date"
                     value={formData.startDate}
                     onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
-                    className="w-full px-4 py-2 bg-neutral-700 text-white rounded-lg border border-neutral-600 focus:border-blue-500 focus:outline-none"
+                    className="w-full px-4 py-3 bg-[#252525] text-white rounded-xl border border-[#3a3a3a] focus:border-purple-500 focus:outline-none input-focus"
                   />
                 </div>
                 <div>
-                  <label className="block text-neutral-400 text-sm mb-1">End Date</label>
+                  <label className="block text-zinc-400 text-sm mb-2">End Date</label>
                   <input
                     type="date"
                     value={formData.endDate}
                     onChange={(e) => setFormData({ ...formData, endDate: e.target.value })}
-                    className="w-full px-4 py-2 bg-neutral-700 text-white rounded-lg border border-neutral-600 focus:border-blue-500 focus:outline-none"
+                    className="w-full px-4 py-3 bg-[#252525] text-white rounded-xl border border-[#3a3a3a] focus:border-purple-500 focus:outline-none input-focus"
                   />
                 </div>
               </div>
-              <div className="flex gap-3 pt-4">
+              <div className="flex gap-3 pt-2">
                 <button
                   type="submit"
-                  className="flex-1 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
+                  className="flex-1 px-4 py-3 bg-gradient-to-r from-purple-600 to-purple-700 text-white rounded-xl hover:from-purple-700 hover:to-purple-800 transition-all duration-200 font-medium btn-press"
                 >
                   {editingCampaign ? 'Update' : 'Create'}
                 </button>
                 <button
                   type="button"
                   onClick={() => setShowForm(false)}
-                  className="flex-1 px-4 py-2 bg-neutral-600 text-white rounded-lg hover:bg-neutral-500 transition-colors"
+                  className="flex-1 px-4 py-3 bg-[#252525] text-white rounded-xl hover:bg-[#303030] transition-colors"
                 >
                   Cancel
                 </button>
@@ -286,59 +301,77 @@ export default function Campaigns() {
       )}
 
       {/* Campaigns Table */}
-      <div className="bg-neutral-800 rounded-xl border border-neutral-700 overflow-hidden">
-        <table className="w-full">
-          <thead className="bg-neutral-700">
-            <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-neutral-300 uppercase">Name</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-neutral-300 uppercase">Client</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-neutral-300 uppercase">Type</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-neutral-300 uppercase">Status</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-neutral-300 uppercase">Budget</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-neutral-300 uppercase">Dates</th>
-              <th className="px-6 py-3 text-right text-xs font-medium text-neutral-300 uppercase">Actions</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-neutral-700">
-            {campaigns.map((campaign) => (
-              <tr key={campaign.id} className="hover:bg-neutral-700/50">
-                <td className="px-6 py-4 text-white">{campaign.name}</td>
-                <td className="px-6 py-4 text-neutral-300">{getClientName(campaign.clientId)}</td>
-                <td className="px-6 py-4 text-neutral-300">{campaign.type}</td>
-                <td className="px-6 py-4">
-                  <span className={`px-2 py-1 text-xs rounded ${statusColors[campaign.status as CampaignStatus] || 'bg-gray-600'} text-white`}>
-                    {campaign.status}
-                  </span>
-                </td>
-                <td className="px-6 py-4 text-neutral-300">${campaign.budget.toLocaleString()}</td>
-                <td className="px-6 py-4 text-neutral-300 text-sm">
-                  {campaign.startDate ? new Date(campaign.startDate).toLocaleDateString() : '-'} - {campaign.endDate ? new Date(campaign.endDate).toLocaleDateString() : '-'}
-                </td>
-                <td className="px-6 py-4 text-right">
-                  <button
-                    onClick={() => startEdit(campaign)}
-                    className="text-blue-400 hover:text-blue-300 mr-3"
-                  >
-                    Edit
-                  </button>
-                  <button
-                    onClick={() => deleteCampaign(campaign.id)}
-                    className="text-red-400 hover:text-red-300"
-                  >
-                    Delete
-                  </button>
-                </td>
-              </tr>
-            ))}
-            {campaigns.length === 0 && (
+      <div className="bg-[#1a1a1a] rounded-2xl border border-[#2a2a2a] overflow-hidden animate-fade-in">
+        <div className="overflow-x-auto">
+          <table className="w-full">
+            <thead className="bg-[#252525]">
               <tr>
-                <td colSpan={7} className="px-6 py-8 text-center text-neutral-400">
-                  No campaigns found. Add a client first, then create a campaign!
-                </td>
+                <th className="px-6 py-4 text-left text-xs font-semibold text-zinc-400 uppercase tracking-wider">Name</th>
+                <th className="px-6 py-4 text-left text-xs font-semibold text-zinc-400 uppercase tracking-wider">Client</th>
+                <th className="px-6 py-4 text-left text-xs font-semibold text-zinc-400 uppercase tracking-wider">Type</th>
+                <th className="px-6 py-4 text-left text-xs font-semibold text-zinc-400 uppercase tracking-wider">Status</th>
+                <th className="px-6 py-4 text-left text-xs font-semibold text-zinc-400 uppercase tracking-wider">Budget</th>
+                <th className="px-6 py-4 text-left text-xs font-semibold text-zinc-400 uppercase tracking-wider">Dates</th>
+                <th className="px-6 py-4 text-right text-xs font-semibold text-zinc-400 uppercase tracking-wider">Actions</th>
               </tr>
-            )}
-          </tbody>
-        </table>
+            </thead>
+            <tbody className="divide-y divide-[#2a2a2a]">
+              {campaigns.map((campaign) => {
+                const statusStyle = statusColors[campaign.status as CampaignStatus] || statusColors.Draft;
+                return (
+                  <tr key={campaign.id} className="table-row-hover">
+                    <td className="px-6 py-4">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-500 to-pink-600 flex items-center justify-center text-white">
+                          📢
+                        </div>
+                        <span className="text-white font-medium">{campaign.name}</span>
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 text-zinc-400">{getClientName(campaign.clientId)}</td>
+                    <td className="px-6 py-4 text-zinc-400">{campaign.type}</td>
+                    <td className="px-6 py-4">
+                      <span className={`status-badge ${statusStyle.bg} ${statusStyle.text} border ${statusStyle.border}`}>
+                        {campaign.status}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 text-zinc-300 font-medium">${campaign.budget.toLocaleString()}</td>
+                    <td className="px-6 py-4 text-zinc-400 text-sm">
+                      {campaign.startDate ? new Date(campaign.startDate).toLocaleDateString() : '-'} - {campaign.endDate ? new Date(campaign.endDate).toLocaleDateString() : '-'}
+                    </td>
+                    <td className="px-6 py-4 text-right">
+                      <div className="flex items-center justify-end gap-2">
+                        <button
+                          onClick={() => startEdit(campaign)}
+                          className="px-3 py-1.5 text-sm text-blue-400 hover:text-blue-300 hover:bg-blue-500/10 rounded-lg transition-colors"
+                        >
+                          Edit
+                        </button>
+                        <button
+                          onClick={() => deleteCampaign(campaign.id)}
+                          className="px-3 py-1.5 text-sm text-red-400 hover:text-red-300 hover:bg-red-500/10 rounded-lg transition-colors"
+                        >
+                          Delete
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                );
+              })}
+              {campaigns.length === 0 && (
+                <tr>
+                  <td colSpan={7} className="px-6 py-12 text-center">
+                    <div className="flex flex-col items-center gap-2">
+                      <span className="text-4xl">📢</span>
+                      <p className="text-zinc-400">No campaigns found</p>
+                      <p className="text-zinc-500 text-sm">Add a client first, then create a campaign!</p>
+                    </div>
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   );
