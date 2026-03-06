@@ -43,3 +43,5 @@ next-env.d.ts
 /backend/bin/Debug/net8.0
 /backend/obj
 /backend/marketing.db
+/backend/marketing.db-shm
+*.db-wal
