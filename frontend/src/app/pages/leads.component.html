@@ -1,0 +1,37 @@
+<h2>Leads</h2>
+<button (click)="startCreate()">Add Lead</button>
+<p *ngIf="loading">Loading leads...</p>
+
+<form *ngIf="showForm" (ngSubmit)="save()" class="form">
+  <input [(ngModel)]="formData.firstName" name="firstName" placeholder="First Name" required />
+  <input [(ngModel)]="formData.lastName" name="lastName" placeholder="Last Name" required />
+  <input [(ngModel)]="formData.email" name="email" placeholder="Email" required />
+  <input [(ngModel)]="formData.phone" name="phone" placeholder="Phone" />
+  <input [(ngModel)]="formData.company" name="company" placeholder="Company" />
+  <select [(ngModel)]="formData.status" name="status">
+    <option *ngFor="let status of statuses" [ngValue]="status">{{ status }}</option>
+  </select>
+  <input [(ngModel)]="formData.source" name="source" placeholder="Source" />
+  <textarea [(ngModel)]="formData.notes" name="notes" placeholder="Notes"></textarea>
+  <button type="submit">{{ editingId ? 'Update' : 'Create' }}</button>
+  <button type="button" (click)="resetForm()">Cancel</button>
+</form>
+
+<table *ngIf="!loading">
+  <thead>
+    <tr><th>Name</th><th>Email</th><th>Company</th><th>Status</th><th>Source</th><th>Actions</th></tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let lead of leads">
+      <td>{{ lead.firstName }} {{ lead.lastName }}</td>
+      <td>{{ lead.email }}</td>
+      <td>{{ lead.company }}</td>
+      <td>{{ lead.status }}</td>
+      <td>{{ lead.source }}</td>
+      <td>
+        <button (click)="edit(lead)">Edit</button>
+        <button (click)="remove(lead.id)">Delete</button>
+      </td>
+    </tr>
+  </tbody>
+</table>

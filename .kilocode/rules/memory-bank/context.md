@@ -1,87 +1,71 @@
-# Active Context: Next.js Starter Template
+# Active Context: Angular SPA + .NET API
 
 ## Current State
 
-**Template Status**: ✅ Ready for development
+**Project Status**: ✅ Frontend migrated from Next.js to Angular
 
-The template is a clean Next.js 16 starter with TypeScript and Tailwind CSS 4. It's ready for AI-assisted expansion to build any type of application.
+The repository now uses an Angular SPA frontend in `frontend/` and a .NET 8 backend in `backend/`. The previous Next.js frontend files were removed from active use.
 
 ## Recently Completed
 
-- [x] Base Next.js 16 setup with App Router
-- [x] TypeScript configuration with strict mode
-- [x] Tailwind CSS 4 integration
-- [x] ESLint configuration
-- [x] Memory bank documentation
-- [x] Recipe system for common features
+- [x] Scaffolded Angular 19 standalone app in `frontend/`
+- [x] Ported dashboard routes (`/dashboard`, `/dashboard/clients`, `/dashboard/leads`, `/dashboard/campaigns`)
+- [x] Implemented Angular `ApiService` with HttpClient for clients/leads/campaigns
+- [x] Added Angular environment config for API base URL
+- [x] Updated backend CORS to allow `http://localhost:4200`
+- [x] Removed Next.js frontend files and switched root npm scripts to Angular
+- [x] LinkedIn-style analytics dashboard on `/dashboard` (ECharts: KPIs, gauge, combo + area charts; filters; demo ad metrics + live CRM totals from API)
 
 ## Current Structure
 
 | File/Directory | Purpose | Status |
 |----------------|---------|--------|
-| `src/app/page.tsx` | Home page | ✅ Ready |
-| `src/app/layout.tsx` | Root layout | ✅ Ready |
-| `src/app/globals.css` | Global styles | ✅ Ready |
-| `.kilocode/` | AI context & recipes | ✅ Ready |
+| `frontend/src/app` | Angular routes/pages/services | ✅ Active |
+| `frontend/src/environments` | API base URL environment config | ✅ Active |
+| `backend/Program.cs` | API host + CORS policy | ✅ Updated |
+| `.kilocode/` | AI context & recipes | ✅ Active |
 
 ## Current Focus
 
-The template is ready. Next steps depend on user requirements:
+The Angular migration is complete. Next steps:
 
-1. What type of application to build
-2. What features are needed
-3. Design/branding preferences
+1. Replace demo ad metrics with real reporting data if/when backend exposes it
+2. Add Angular tests for API services and dashboard pages
+3. Configure deployment pipeline for `frontend/dist/frontend`
 
 ## Quick Start Guide
 
-### To add a new page:
+### Start frontend
 
-Create a file at `src/app/[route]/page.tsx`:
-```tsx
-export default function NewPage() {
-  return <div>New page content</div>;
-}
+Run from repo root:
+```bash
+npm start
 ```
 
-### To add components:
+### Build frontend
 
-Create `src/components/` directory and add components:
-```tsx
-// src/components/ui/Button.tsx
-export function Button({ children }: { children: React.ReactNode }) {
-  return <button className="px-4 py-2 bg-blue-600 text-white rounded">{children}</button>;
-}
+```bash
+npm run build
 ```
 
-### To add a database:
+### Backend API
 
-Follow `.kilocode/recipes/add-database.md`
-
-### To add API routes:
-
-Create `src/app/api/[route]/route.ts`:
-```tsx
-import { NextResponse } from "next/server";
-
-export async function GET() {
-  return NextResponse.json({ message: "Hello" });
-}
-```
+Run the .NET backend in `backend/` and ensure API is reachable at `http://localhost:5000`.
 
 ## Available Recipes
 
 | Recipe | File | Use Case |
 |--------|------|----------|
-| Add Database | `.kilocode/recipes/add-database.md` | Data persistence with Drizzle + SQLite |
+| Add Database | `.kilocode/recipes/add-database.md` | Additional persistence features |
 
 ## Pending Improvements
 
-- [ ] Add more recipes (auth, email, etc.)
-- [ ] Add example components
-- [ ] Add testing setup recipe
+- [ ] Add Angular unit/integration tests
+- [ ] Add frontend lint/format CI checks
+- [ ] Add production environment API URL strategy
 
 ## Session History
 
 | Date | Changes |
 |------|---------|
-| Initial | Template created with base setup |
+| 2026-04-01 | Migrated frontend from Next.js to Angular SPA |

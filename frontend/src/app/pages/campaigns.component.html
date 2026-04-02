@@ -1,0 +1,40 @@
+<h2>Campaigns</h2>
+<button (click)="startCreate()" [disabled]="clients.length === 0">Add Campaign</button>
+<p *ngIf="loading">Loading campaigns...</p>
+<p *ngIf="!loading && clients.length === 0">Create clients first to create campaigns.</p>
+
+<form *ngIf="showForm" (ngSubmit)="save()" class="form">
+  <input [(ngModel)]="formData.name" name="name" placeholder="Name" required />
+  <input [(ngModel)]="formData.description" name="description" placeholder="Description" />
+  <input [(ngModel)]="formData.type" name="type" placeholder="Type" />
+  <select [(ngModel)]="formData.clientId" name="clientId" required>
+    <option *ngFor="let client of clients" [ngValue]="client.id">{{ client.name }}</option>
+  </select>
+  <select [(ngModel)]="formData.status" name="status">
+    <option *ngFor="let status of statuses" [ngValue]="status">{{ status }}</option>
+  </select>
+  <input type="number" [(ngModel)]="formData.budget" name="budget" placeholder="Budget" />
+  <input type="date" [(ngModel)]="formData.startDate" name="startDate" />
+  <input type="date" [(ngModel)]="formData.endDate" name="endDate" />
+  <button type="submit">{{ editingId ? 'Update' : 'Create' }}</button>
+  <button type="button" (click)="resetForm()">Cancel</button>
+</form>
+
+<table *ngIf="!loading">
+  <thead>
+    <tr><th>Name</th><th>Client</th><th>Type</th><th>Status</th><th>Budget</th><th>Actions</th></tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let campaign of campaigns">
+      <td>{{ campaign.name }}</td>
+      <td>{{ clientName(campaign.clientId) }}</td>
+      <td>{{ campaign.type }}</td>
+      <td>{{ campaign.status }}</td>
+      <td>{{ campaign.budget | number:'1.0-2' }}</td>
+      <td>
+        <button (click)="edit(campaign)">Edit</button>
+        <button (click)="remove(campaign.id)">Delete</button>
+      </td>
+    </tr>
+  </tbody>
+</table>

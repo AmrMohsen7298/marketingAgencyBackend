@@ -1,0 +1,98 @@
+<div class="analytics-page">
+  <header class="analytics-header">
+    <div class="brand">
+      <span class="brand-mark">MH</span>
+      <div>
+        <h1>Campaign performance</h1>
+        <p class="sub">Marketing analytics (demo metrics + live CRM totals)</p>
+      </div>
+    </div>
+    <a class="btn-explore" href="http://localhost:5000/swagger" target="_blank" rel="noreferrer">
+      Explore API
+    </a>
+  </header>
+
+  <section class="filters" *ngIf="!loading">
+    <label class="field">
+      <span>Date range</span>
+      <div class="date-range">
+        <input type="date" [(ngModel)]="filter.start" (ngModelChange)="onFilterChange()" />
+        <span class="sep">–</span>
+        <input type="date" [(ngModel)]="filter.end" (ngModelChange)="onFilterChange()" />
+      </div>
+    </label>
+    <label class="field">
+      <span>Campaign</span>
+      <select [(ngModel)]="filter.campaignId" (ngModelChange)="onFilterChange()">
+        <option [ngValue]="'all'">All campaigns</option>
+        <option *ngFor="let c of campaigns" [ngValue]="c.id">{{ c.name }}</option>
+      </select>
+    </label>
+    <label class="field">
+      <span>Campaign group</span>
+      <select [(ngModel)]="filter.clientGroupId" (ngModelChange)="onFilterChange()">
+        <option [ngValue]="'all'">All clients</option>
+        <option *ngFor="let cl of clients" [ngValue]="cl.id">{{ cl.name }}</option>
+      </select>
+    </label>
+  </section>
+
+  <p class="loading" *ngIf="loading">Loading dashboard…</p>
+
+  <ng-container *ngIf="!loading">
+    <section class="kpi-gauge-row">
+      <div class="kpi-grid">
+        <article class="kpi-card" *ngFor="let k of primaryKpis">
+          <p class="kpi-label">{{ k.label }}</p>
+          <p class="kpi-value">{{ k.value }}</p>
+          <p
+            class="kpi-trend"
+            [class.up]="k.trendPct >= 0"
+            [class.down]="k.trendPct < 0"
+          >
+            {{ k.trendPct >= 0 ? '↑' : '↓' }}
+            {{ k.trendPct | number : '1.1-1' }}%
+          </p>
+        </article>
+      </div>
+      <aside class="gauge-card">
+        <p class="gauge-hint">Consider optimising your campaign if frequency exceeds 4.</p>
+        <div class="gauge-chart" echarts [options]="gaugeOption"></div>
+        <p class="gauge-value">
+          Avg daily frequency: <strong>{{ frequencyValue | number : '1.2-2' }}</strong>
+        </p>
+      </aside>
+    </section>
+
+    <section class="crm-row" *ngIf="secondaryKpis.length">
+      <article class="crm-card" *ngFor="let k of secondaryKpis">
+        <p class="crm-label">{{ k.label }}</p>
+        <p class="crm-value">{{ k.value }}</p>
+        <p
+          class="kpi-trend small"
+          [class.up]="k.trendPct >= 0"
+          [class.down]="k.trendPct < 0"
+        >
+          {{ k.trendPct >= 0 ? '↑' : '↓' }}
+          {{ k.trendPct | number : '1.1-1' }}%
+        </p>
+      </article>
+    </section>
+
+    <section class="charts-row">
+      <div class="chart-panel">
+        <h3>Impressions &amp; CPM</h3>
+        <div class="chart" echarts [options]="chartImpressionsCpm"></div>
+      </div>
+      <div class="chart-panel">
+        <h3>Clicks &amp; CPC</h3>
+        <div class="chart" echarts [options]="chartClicksCpc"></div>
+      </div>
+    </section>
+
+    <section class="chart-panel wide">
+      <h3>Amount spent by date</h3>
+      <div class="chart chart-tall" echarts [options]="chartSpend"></div>
+    </section>
+  </ng-container>
+</div>

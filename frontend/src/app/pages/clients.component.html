@@ -1,0 +1,31 @@
+<h2>Clients</h2>
+<button (click)="startCreate()">Add Client</button>
+<p *ngIf="loading">Loading clients...</p>
+
+<form *ngIf="showForm" (ngSubmit)="save()" class="form">
+  <input [(ngModel)]="formData.name" name="name" placeholder="Name" required />
+  <input [(ngModel)]="formData.email" name="email" placeholder="Email" required />
+  <input [(ngModel)]="formData.phone" name="phone" placeholder="Phone" />
+  <input [(ngModel)]="formData.company" name="company" placeholder="Company" />
+  <input [(ngModel)]="formData.industry" name="industry" placeholder="Industry" />
+  <button type="submit">{{ editingId ? 'Update' : 'Create' }}</button>
+  <button type="button" (click)="resetForm()">Cancel</button>
+</form>
+
+<table *ngIf="!loading">
+  <thead>
+    <tr><th>Name</th><th>Email</th><th>Company</th><th>Industry</th><th>Actions</th></tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let client of clients">
+      <td>{{ client.name }}</td>
+      <td>{{ client.email }}</td>
+      <td>{{ client.company }}</td>
+      <td>{{ client.industry }}</td>
+      <td>
+        <button (click)="edit(client)">Edit</button>
+        <button (click)="remove(client.id)">Delete</button>
+      </td>
+    </tr>
+  </tbody>
+</table>
